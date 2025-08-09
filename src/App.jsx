@@ -8,20 +8,49 @@ import Home from "./Pages/Home/Home";
 import { Toaster } from "react-hot-toast";
 import PostsDetails from "./Pages/PostsDetails/PostsDetails";
 import { UserContextProvider } from "./Context/UserContext";
-import Profile from './Pages/Profile/Profile';
-import EditProfile from './Pages/EditProfile/EditProfile';
+import Profile from "./Pages/Profile/Profile";
+import EditProfile from "./Pages/EditProfile/EditProfile";
 import { ProtectedRouting } from "./ProtectedRouting/ProtectedRouting";
+import { LoadingProvider } from "./Context/LoadingContext";
 export default function App() {
   let Routes = createBrowserRouter([
     {
       path: "/",
       element: <Layout />,
       children: [
-        { index: true, element: <ProtectedRouting><Home /></ProtectedRouting> },
+        {
+          index: true,
+          element: (
+            <ProtectedRouting>
+              <Home />
+            </ProtectedRouting>
+          ),
+        },
         { path: "login", element: <Login /> },
-        { path: "postsDetails/:id", element: <ProtectedRouting><PostsDetails /></ProtectedRouting> },
-        { path: "profile", element: <ProtectedRouting><Profile /></ProtectedRouting> },
-        { path: "editProfile", element: <ProtectedRouting><EditProfile /></ProtectedRouting> },
+        {
+          path: "postsDetails/:id",
+          element: (
+            <ProtectedRouting>
+              <PostsDetails />
+            </ProtectedRouting>
+          ),
+        },
+        {
+          path: "profile",
+          element: (
+            <ProtectedRouting>
+              <Profile />
+            </ProtectedRouting>
+          ),
+        },
+        {
+          path: "editProfile",
+          element: (
+            <ProtectedRouting>
+              <EditProfile />
+            </ProtectedRouting>
+          ),
+        },
         { path: "register", element: <Register /> },
         { path: "*", element: <NotFound /> },
       ],
@@ -29,10 +58,12 @@ export default function App() {
   ]);
   return (
     <>
-      <UserContextProvider>
-        <RouterProvider router={Routes} />
-        <Toaster />
-      </UserContextProvider>
+      <LoadingProvider>
+        <UserContextProvider>
+          <RouterProvider router={Routes} />
+          <Toaster />
+        </UserContextProvider>
+      </LoadingProvider>
     </>
   );
 }

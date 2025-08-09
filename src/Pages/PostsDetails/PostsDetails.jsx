@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
-import axios from 'axios';
+import React, { useEffect, useState, useContext } from "react";
+import { useParams } from "react-router";
+import axios from "axios";
+import { LoadingContext } from "../../Context/LoadingContext";
 
 export default function PostsDetails() {
   const { id } = useParams();
   const [post, setPost] = useState(null);
+  const { setLoading } = useContext(LoadingContext);
 
   useEffect(() => {
     getPostDetails();
@@ -12,15 +14,20 @@ export default function PostsDetails() {
 
   async function getPostDetails() {
     try {
-      const { data } = await axios.get(`https://linked-posts.routemisr.com/posts/${id}`, {
-        headers: {
-          token: localStorage.getItem("token"),
-        },
-      });
-      console.log(data);
+      setLoading(true);
+      const { data } = await axios.get(
+        `https://linked-posts.routemisr.com/posts/${id}`,
+        {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        }
+      );
       setPost(data.post);
     } catch (err) {
       console.error("Failed to fetch post details:", err);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -28,7 +35,6 @@ export default function PostsDetails() {
     <div>
       {post && (
         <div className="cardItem rounded-3xl my-5 p-5 bg-white">
-          {/* Post Content */}
           <div className="cardBody">
             <div className="cardItem-Avatar">
               <div className="flex items-center gap-4">
@@ -50,11 +56,14 @@ export default function PostsDetails() {
             <p className="text-zinc-500 my-5">{post.body}</p>
 
             {post.image && (
-              <img src={post.image} className="w-full rounded-2xl" alt={post.body} />
+              <img
+                src={post.image}
+                className="w-full rounded-2xl"
+                alt={post.body}
+              />
             )}
           </div>
 
-          {/* Comments Section */}
           <div className="cardFooter">
             <div className="flex justify-between">
               <h2>{post.comments.length} Comments</h2>
